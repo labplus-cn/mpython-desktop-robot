@@ -23,13 +23,15 @@
 固件修改
 1、加入PSRAM支持
     mpconfigboard.mk加入psram配置
-2、1.6寸彩屏驱动
+
+2、修改_boot.py中RGBled引脚。
+3、1.54 oled驱动：
+    新增ssd1309驱动
+    修改mpython中oled的父类为ssd1309_i2c
+    升压电路受控。
+
+*、1.6寸彩屏驱动
    1）modst7789.c放入builtin文件兲，修改makefile加入本文件的编译。
    2）加大应用分区表
    3）mpconfigboard.h加入模块st7789
-
-3、修改_boot.py中RGBled引脚。
-4、1.54 oled驱动：
-    新增ssd1306驱动
-    修改mpython中oled的父类为ssd1306_i2c
     

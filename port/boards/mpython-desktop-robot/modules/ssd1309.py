@@ -42,7 +42,7 @@ SET_SCROLL_DEACTIVE = const(0x2e)
 
 # Subclassing FrameBuffer provides support for graphics primitives
 # http://docs.micropython.org/en/latest/pyboard/library/framebuf.html
-class SSD1306(framebuf.FrameBuffer):
+class SSD1309(framebuf.FrameBuffer):
     def __init__(self, width, height, external_vcc):
         self.width = width
         self.height = height
@@ -62,7 +62,6 @@ class SSD1306(framebuf.FrameBuffer):
                 SET_DISP_OFFSET, 0x00,  #-set display offset Shift Mapping RAM Counter (0x00~0x3F) -not offset
                 SET_DISP_START_LINE,  #--set start line address  Set Mapping RAM Display Start Line (0x00~0x3F)
                 SET_COLUMN_MAP | 0x01, #--Set SEG/Column Mapping     0xa0左右反置 0xa1正常
-                SET_MEM_ADDR, 0x10, # address setting
                 SET_ROW_SCAN_DIR | 0x08,  #Set COM/Row Scan Direction   0xc0上下反置 0xc8正常
                 SET_COM_PIN_CFG, 0x12, #--set com pins hardware configuration
                 SET_CONTRACT_CTRL, 0xbf, #--set contrast control register
@@ -75,8 +74,6 @@ class SSD1306(framebuf.FrameBuffer):
             ): 
             self.write_cmd(cmd)
         self.clear()
-        # self.fill(0)
-        # self.show()
 
     def clear(self):
         for i in range(0,8):
@@ -111,8 +108,8 @@ class SSD1306(framebuf.FrameBuffer):
             self.write_data(self.buffer[i*128:(i+1)*128])   # send one page display data
 
 
-class SSD1306_I2C(SSD1306):
-    def __init__(self, width, height, i2c, addr=0x3d, external_vcc=False):
+class SSD1309_I2C(SSD1309):
+    def __init__(self, width, height, i2c, addr=0x3c, external_vcc=False):
         self.i2c = i2c
         self.addr = addr
         self.temp = bytearray(2)
@@ -129,7 +126,7 @@ class SSD1306_I2C(SSD1306):
         self.i2c.writevto(self.addr, self.write_list)
 
 
-class SSD1306_SPI(SSD1306):
+class SSD1306_SPI(SSD1309):
     def __init__(self, width, height, spi, dc, res, cs, external_vcc=False):
         self.rate = 10 * 1024 * 1024
         dc.init(dc.OUT, value=0)
