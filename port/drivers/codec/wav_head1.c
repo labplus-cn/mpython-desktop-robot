@@ -1,7 +1,7 @@
 // Copyright 2018 Espressif Systems (Shanghai) PTE LTD
 // All rights reserved.
 
-#include "wav_head.h"
+#include "wav_head1.h"
 
 #ifdef __cplusplus
 extern "C" {

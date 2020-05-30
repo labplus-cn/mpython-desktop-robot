@@ -381,7 +381,7 @@ CODEC_SRC_C = $(addprefix drivers/codec/,\
 	http_client.c \
 	audio_renderer.c \
 	audio_recorder.c \
-	wav_head.c \
+	wav_head1.c \
 	codec_lib/libmad/bit.c \
 	codec_lib/libmad/decoder.c \
 	codec_lib/libmad/fixed.c \

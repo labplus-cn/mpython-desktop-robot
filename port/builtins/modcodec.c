@@ -19,7 +19,7 @@
 #include "py/objstr.h"
 #include "modmachine.h"
 #include "mphalport.h"
-#include "wav_head.h"
+#include "wav_head1.h"
 #include "esp_log.h"
 #include "esp_system.h"
 #include "esp_http_client.h"
@@ -39,7 +39,7 @@
 #include "modcodec.h"
 #include "audio_recorder.h"
 #include "local_play.h"
-#include "es8388.h"
+#include "es8388_1.h"
 
 static const char *TAG = "audio";
 

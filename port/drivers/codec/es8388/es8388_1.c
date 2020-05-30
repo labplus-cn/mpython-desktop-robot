@@ -24,7 +24,7 @@
 
 #include <string.h>
 #include "esp_log.h"
-#include "es8388.h"
+#include "es8388_1.h"
 
 #include "py/mperrno.h"
 #include "py/mphal.h"

@@ -293,6 +293,7 @@ endif
 LIBC_LIBM = $(ESPCOMP)/newlib/lib/libc.a $(ESPCOMP)/newlib/lib/libm.a
 endif
 
+# include $(BOARD_DIR)/esp-adf/mpadfenv.mk
 #################BUILD###############################################################
 # List of MicroPython source and object files
 
@@ -359,7 +360,6 @@ DRIVERS_SRC_C = $(addprefix drivers/,\
 	bus/softspi.c \
 	dht/dht.c \
 	)
-
 #########################################################################################################
 # mpython projects
 # 开机显示和异常打印功能模块
@@ -383,7 +383,7 @@ CODEC_SRC_C = $(addprefix drivers/codec/,\
 	http_client.c \
 	audio_renderer.c \
 	audio_recorder.c \
-	wav_head.c \
+	wav_head1.c \
 	codec_lib/helix/src/bitstream.c \
 	codec_lib/helix/src/buffers.c \
 	codec_lib/helix/src/dct32.c \
@@ -400,7 +400,7 @@ CODEC_SRC_C = $(addprefix drivers/codec/,\
 	codec_lib/helix/src/subband.c \
 	codec_lib/helix/src/trigtabs.c \
 	decoder/helix_mp3_decoder.c \
-	es8388/es8388.c \
+	es8388/es8388_1.c \
 	)
 
 # mpu6050驱动
@@ -473,6 +473,7 @@ SRC_C := $(addprefix ports/esp32/, $(filter-out $(notdir $(BOARD_C)) $(notdir $(
 PY_O := $(filter-out $(BUILD)/extmod/modframebuf.o, $(PY_O))
 
 SRC_C += $(BOARD_C) $(BUILTIN_C) $(SRC_MOD)
+# SRC_C += $(wildcard $(BOARD_DIR)/esp-adf/mod/*.c)
 
 OBJ_MP =
 OBJ_MP += $(PY_O)
@@ -731,6 +732,8 @@ endif
 
 ######################################################################
 # add esp componets for audio 
+
+# include $(BOARD_DIR)/esp-adf/mpadfobj.mk
 # nghttp
 CFLAGS += -I$(ESPCOMP)/nghttp/port/include
 CFLAGS += -I$(ESPCOMP)/nghttp/nghttp2/lib/includes

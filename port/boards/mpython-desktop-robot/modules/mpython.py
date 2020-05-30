@@ -296,7 +296,16 @@ class wifi:
         self.ap.active(False)
         print('disable AP WiFi...')
 
+class STATUS_LED():
+    def __init__(self):
+        self.led = MPythonPin(9, PinMode.OUT) # p9
+        pass
 
+    def on(self):
+        self.led.write_digital(1)
+
+    def off(self):
+        self.led.write_digital(0)
 
 # display
 if 60 in i2c.scan():
@@ -316,8 +325,10 @@ rgb = NeoPixel(Pin(27, Pin.OUT), 8, 3, 1)
 rgb.write()
 
 # light sensor
-light = ADC(Pin(39))
-light.atten(light.ATTN_11DB)
+light_L = ADC(Pin(39))
+light_L.atten(light_L.ATTN_11DB)
+light_R = ADC(Pin(36))
+light_R.atten(light_R.ATTN_11DB)
 
 # # # sound sensor
 # # sound = ADC(Pin(36))
@@ -326,6 +337,9 @@ light.atten(light.ATTN_11DB)
 
 # buttons
 button_b = Pin(2, Pin.IN, Pin.PULL_UP)
+# status led
+status_led = STATUS_LED()
+
 pin_st_int = Pin(26, Pin.IN, Pin.PULL_UP)
 def st_int_trigger(_):
     print("st int trigger.")
