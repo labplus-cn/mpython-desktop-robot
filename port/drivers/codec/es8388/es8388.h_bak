@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef __ES8388_1_H__
-#define __ES8388_1_H__
+#ifndef __ES8388_H__
+#define __ES8388_H__
 
 #include "esp_types.h"
 #include "driver/i2c.h"
