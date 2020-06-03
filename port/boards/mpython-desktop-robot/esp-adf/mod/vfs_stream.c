@@ -106,6 +106,8 @@ static esp_err_t _vfs_open(audio_element_handle_t self)
     }
     ESP_LOGD(TAG, "_vfs_open, uri:%s", uri);
     char *path = strstr(uri, "/sdcard");
+    // char *path = "music.mp3";
+    ESP_LOGE(TAG, "file path: %s", path);
     audio_element_getinfo(self, &info);
     if (path == NULL) {
         ESP_LOGE(TAG, "Error, need file path to open");
@@ -121,7 +123,7 @@ static esp_err_t _vfs_open(audio_element_handle_t self)
         args[1] = mp_obj_new_str("rb", strlen("rb"));
         vfs->file = mp_vfs_open(2, args, (mp_map_t *)&mp_const_empty_map);
         info.total_bytes = get_len(vfs->file);
-        ESP_LOGI(TAG, "File size is %d byte,pos:%d", (int)info.total_bytes, (int)info.byte_pos);
+        ESP_LOGE(TAG, "File size is %d byte,pos:%d", (int)info.total_bytes, (int)info.byte_pos);
         if (vfs->file != mp_const_none && (info.byte_pos > 0)) {
             if (mp_stream_posix_lseek(vfs->file, info.byte_pos, SEEK_SET) != 0) {
                 ESP_LOGE(TAG, "Error seek file");
@@ -223,7 +225,7 @@ static esp_err_t _vfs_close(audio_element_handle_t self)
         }
         audio_element_info_t info;
         audio_element_getinfo(self, &info);
-        wav_head_init(wav_info, info.sample_rates, info.bits, info.channels,0);
+        wav_head_init(wav_info, info.sample_rates, info.bits, info.channels);
         wav_head_size(wav_info, (uint32_t)info.byte_pos);
         mp_stream_posix_write(vfs->file, wav_info, sizeof(wav_header_t));
         mp_stream_posix_fsync(vfs->file);
@@ -261,7 +263,7 @@ audio_element_handle_t vfs_stream_init(vfs_stream_cfg_t *config)
 
     AUDIO_MEM_CHECK(TAG, vfs, return NULL);
 
-    audio_element_cfg_t cfg = DEFAULT_AUDIO_ELEMENT_CONFIG();
+    audio_element_cfg_t cfg = DEFAULT_AUDIO_ELEMENT_CONFIG(); 
     cfg.open = _vfs_open;
     cfg.close = _vfs_close;
     cfg.process = _vfs_process;

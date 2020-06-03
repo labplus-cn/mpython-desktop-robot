@@ -40,6 +40,7 @@
 #include "http_stream.h"
 #include "i2s_stream.h"
 #include "vfs_stream.h"
+#include "es8388.h"
 
 typedef struct _audio_player_obj_t {
     mp_obj_base_t base;
@@ -119,6 +120,8 @@ STATIC esp_audio_handle_t audio_player_create(void)
     vfs_stream_cfg_t fs_reader = VFS_STREAM_CFG_DEFAULT();
     fs_reader.type = AUDIO_STREAM_READER;
     fs_reader.task_core = 1;
+    fs_reader.task_stack  = 10240;
+    fs_reader.task_prio =   9;
     esp_audio_input_stream_add(player, vfs_stream_init(&fs_reader));
     // http stream
     http_stream_cfg_t http_cfg = HTTP_STREAM_CFG_DEFAULT();
@@ -148,6 +151,7 @@ STATIC esp_audio_handle_t audio_player_create(void)
     i2s_writer.type = AUDIO_STREAM_WRITER;
     i2s_writer.i2s_config.sample_rate = 48000;
     i2s_writer.task_core = 1;
+    i2s_writer.i2s_config.intr_alloc_flags = ESP_INTR_FLAG_LEVEL2;
     esp_audio_output_stream_add(player, i2s_stream_init(&i2s_writer));
 
     return player;
@@ -155,13 +159,16 @@ STATIC esp_audio_handle_t audio_player_create(void)
 
 STATIC mp_obj_t audio_player_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args)
 {
-    mp_arg_check_num(n_args, n_kw, 1, 1, false);
+    mp_arg_check_num(n_args, n_kw, 2, 2, false);
 
     static esp_audio_handle_t basic_player = NULL;
 
     audio_player_obj_t *self = m_new_obj_with_finaliser(audio_player_obj_t);
     self->base.type = type;
     self->callback = args[0];
+    if(!es_i2c_obj){
+        es_i2c_obj = (mp_obj_base_t *)args[1];
+    }
     if (basic_player == NULL) {
         basic_player = audio_player_create();
     }

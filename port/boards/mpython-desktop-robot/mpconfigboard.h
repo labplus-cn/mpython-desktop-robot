@@ -21,7 +21,7 @@ extern const struct _mp_obj_module_t audio_module;
 
 #define BOARD_PORT_BUILTIN_MODULES \
         { MP_OBJ_NEW_QSTR(MP_QSTR_motion_mpu6050), (mp_obj_t)&mp_module_motion }, \
-        { MP_OBJ_NEW_QSTR(MP_QSTR_audio), (mp_obj_t)&audio_module }, \
+        { MP_OBJ_NEW_QSTR(MP_QSTR_esp_audio), (mp_obj_t)&audio_module }, \
 
 
     

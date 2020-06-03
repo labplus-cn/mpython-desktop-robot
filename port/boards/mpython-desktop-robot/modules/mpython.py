@@ -340,11 +340,11 @@ button_b = Pin(2, Pin.IN, Pin.PULL_UP)
 # status led
 status_led = STATUS_LED()
 
-pin_st_int = Pin(26, Pin.IN, Pin.PULL_UP)
-def st_int_trigger(_):
-    print("st int trigger.")
+# pin_st_int = Pin(26, Pin.IN, Pin.PULL_UP)
+# def st_int_trigger(_):
+#     print("st int trigger.")
 
-pin_st_int.irq(trigger=Pin.IRQ_FALLING, handler=st_int_trigger)
+# pin_st_int.irq(trigger=Pin.IRQ_FALLING, handler=st_int_trigger)
 
 from gui import *
 

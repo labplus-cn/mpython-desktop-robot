@@ -24,12 +24,17 @@
 
 #include <string.h>
 #include "esp_log.h"
-#include "i2c_bus.h"
 #include "es8388.h"
 #include "board_pins_config.h"
 
+#include "py/mperrno.h"
+#include "py/mphal.h"
+#include "py/runtime.h"
+#include "extmod/machine_i2c.h"
+
 static const char *ES_TAG = "ES8388_DRIVER";
-static i2c_bus_handle_t i2c_handle;
+#define ES8388_ADDR 16
+mp_obj_base_t *es_i2c_obj = NULL;
 
 #define ES_ASSERT(a, format, b, ...) \
     if ((a) != 0) { \
@@ -49,27 +54,44 @@ audio_hal_func_t AUDIO_CODEC_ES8388_DEFAULT_HANDLE = {
 
 static esp_err_t es_write_reg(uint8_t slave_addr, uint8_t reg_add, uint8_t data)
 {
-    return i2c_bus_write_bytes(i2c_handle, slave_addr, &reg_add, sizeof(reg_add), &data, sizeof(data));
+    mp_machine_i2c_p_t *i2c_p = (mp_machine_i2c_p_t*)es_i2c_obj->type->protocol;
+    uint8_t temp[2];
+    temp[0] = (uint8_t)reg_add;
+    temp[1] = data;
+
+    mp_machine_i2c_buf_t buf = {.len = 2, .buf = temp};
+    bool stop = true;
+    unsigned int flags = stop ? MP_MACHINE_I2C_FLAG_STOP : 0;
+    int ret = i2c_p->transfer((mp_obj_base_t *)es_i2c_obj, ES8388_ADDR, 1, &buf, flags);
+    if (ret < 0) {
+        mp_raise_OSError(-ret);
+    }
+    return ret;
 }
 
 static esp_err_t es_read_reg(uint8_t reg_add, uint8_t *p_data)
 {
-    return i2c_bus_read_bytes(i2c_handle, ES8388_ADDR, &reg_add, sizeof(reg_add), p_data, 1);
-}
+    mp_machine_i2c_p_t *i2c_p = (mp_machine_i2c_p_t*)es_i2c_obj->type->protocol;
 
-static int i2c_init()
-{
-    int res;
-    i2c_config_t es_i2c_cfg = {
-        .mode = I2C_MODE_MASTER,
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = 100000
-    };
-    res = get_i2c_pins(I2C_NUM_0, &es_i2c_cfg);
-    ES_ASSERT(res, "getting i2c pins error", -1);
-    i2c_handle = i2c_bus_create(I2C_NUM_0, &es_i2c_cfg);
-    return res;
+    uint8_t _reg_addr = reg_add;
+    mp_machine_i2c_buf_t buf = {.len = 1, .buf = (uint8_t*)&_reg_addr};
+    bool stop = false;
+    unsigned int flags = stop ? MP_MACHINE_I2C_FLAG_STOP : 0;
+    int ret = i2c_p->transfer((mp_obj_base_t *)es_i2c_obj, ES8388_ADDR, 1, &buf, flags);
+    if (ret < 0) {
+        mp_raise_OSError(-ret);
+    }
+
+    buf.len = 1;
+    buf.buf = p_data;
+    stop = true;
+    flags = MP_MACHINE_I2C_FLAG_READ | (stop ? MP_MACHINE_I2C_FLAG_STOP : 0);
+    ret = i2c_p->transfer((mp_obj_base_t *)es_i2c_obj, ES8388_ADDR, 1, &buf, flags);
+    if (ret < 0) {
+        mp_raise_OSError(-ret);
+    }
+
+    return ret;
 }
 
 void es8388_read_all()
@@ -226,10 +248,10 @@ esp_err_t es8388_deinit(void)
 {
     int res = 0;
     res = es_write_reg(ES8388_ADDR, ES8388_CHIPPOWER, 0xFF);  //reset and stop es8388
-    i2c_bus_delete(i2c_handle);
-#ifdef CONFIG_ESP_LYRAT_V4_3_BOARD
-    headphone_detect_deinit();
-#endif
+//     i2c_bus_delete(i2c_handle);
+// #ifdef CONFIG_ESP_LYRAT_V4_3_BOARD
+//     headphone_detect_deinit();
+// #endif
 
     return res;
 }
@@ -242,11 +264,11 @@ esp_err_t es8388_deinit(void)
 esp_err_t es8388_init(audio_hal_codec_config_t *cfg)
 {
     int res = 0;
-#ifdef CONFIG_ESP_LYRAT_V4_3_BOARD
-    headphone_detect_init(get_headphone_detect_gpio());
-#endif
+// #ifdef CONFIG_ESP_LYRAT_V4_3_BOARD
+//     headphone_detect_init(get_headphone_detect_gpio());
+// #endif
 
-    res = i2c_init(); // ESP32 in master mode
+//     res = i2c_init(); // ESP32 in master mode
 
     res |= es_write_reg(ES8388_ADDR, ES8388_DACCONTROL3, 0x04);  // 0x04 mute/0x00 unmute&ramp;DAC unmute and  disabled digital volume control soft ramp
     /* Chip Control and Power Management */
