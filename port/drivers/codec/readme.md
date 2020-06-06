@@ -3,9 +3,9 @@
 --------------------------------
 1、esp32新增文件夹，放增加的源文件。
     新增的源文件：
-    wav_head.h
+    wav_head1.h
     modcodec.h/c
-		wav_head.h
+		wav_head1.h
 		helix/*.h/c 
 
 
@@ -69,9 +69,9 @@ mp3解码支持
 	|--include 
 	|  |--audio_play.h
 	|  |--audio_render.h
-	|  |--board.h
+	|  |--board1.h
 	|  |--modcodec.h
-	|  |--wav_head.h
+	|  |--wav_head1.h
 	|--audio_play.c    //播放任务
 	|--audio_render.c  //i2s dac设置
 	|--http_client.c   //http客户端请求回应
@@ -157,12 +157,12 @@ mp3解码支持
 	|--include 
 	|  |--audio_play.h
 	|  |--audio_render.h  
-	|  |--board.h
+	|  |--board1.h
 	|  |--http_client.h  
 	|  |--local_play.h  
 	|  |--modcodec.h
 	|  |--urlcodec.h
-	|  |--wav_head.h
+	|  |--wav_head1.h
 	|--audio_play.c    //播放任务
 	|--audio_render.c  //i2s dac设置
 	|--http_client.c   //网络音频获取
@@ -402,12 +402,12 @@ github分支提交
 	|--include 
 	|  |--audio_play.h
 	|  |--audio_render.h  
-	|  |--board.h
+	|  |--board1.h
 	|  |--http_client.h  
 	|  |--local_play.h  
 	|  |--modcodec.h
 	|  |--urlcodec.h
-	|  |--wav_head.h
+	|  |--wav_head1.h
 	|  |--audio_recocrder.h
 	|--audio_play.c    //播放任务
 	|--audio_render.c  //i2s dac设置
@@ -416,7 +416,7 @@ github分支提交
 	|--modcodec.c      //python模块
 	|--readme.md       //本文档
 	|--urlcodec.c
-	|--wav_head.c
+	|--wav_head1.c
 	|--audio_recorder.c
 2019.06.22
 test

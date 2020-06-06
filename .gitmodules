@@ -4,3 +4,6 @@
 [submodule "mpython-docs"]
 	path = mpython-docs
 	url = https://github.com/labplus-cn/mpython-docs.git
+[submodule "port/lib/esp-adf"]
+	path = port/lib/esp-adf
+	url = https://github.com/espressif/esp-adf.git

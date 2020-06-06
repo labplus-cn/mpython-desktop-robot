@@ -19,7 +19,7 @@
 #include "py/objstr.h"
 #include "modmachine.h"
 #include "mphalport.h"
-#include "wav_head.h"
+#include "wav_head1.h"
 #include "esp_log.h"
 #include "esp_system.h"
 #include "esp_http_client.h"
@@ -40,6 +40,7 @@
 #include "audio_recorder.h"
 #include "local_play.h"
 #include "es8388.h"
+#include "board_def.h"
 
 static const char *TAG = "audio";
 
@@ -54,7 +55,7 @@ STATIC mp_obj_t audio_player_init(size_t n_args, const mp_obj_t *args)
         if(!es_i2c_obj){
             es_i2c_obj = (mp_obj_base_t *)args[0];
             audio_hal_codec_config_t cfg = AUDIO_CODEC_DEFAULT_CONFIG();
-            es8388_init(cfg);
+            es8388_init(&cfg);
         }
     }
     else
@@ -138,7 +139,7 @@ STATIC mp_obj_t audio_recorder_init(size_t n_args, const mp_obj_t *args)
         if(!es_i2c_obj){
             es_i2c_obj = (mp_obj_base_t *)args[0];
             audio_hal_codec_config_t cfg = AUDIO_CODEC_DEFAULT_CONFIG();
-            es8388_init(cfg);
+            es8388_init(&cfg);
         }
     }
     else
