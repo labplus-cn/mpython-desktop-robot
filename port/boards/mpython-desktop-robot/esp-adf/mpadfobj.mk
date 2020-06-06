@@ -6,13 +6,13 @@ ESPADF_AUDIO_BOARD_O = $(patsubst %.c,%.o,$(wildcard $(BOARD_DIR)/esp-adf/board/
 ESPADF_AUDIO_PIPELINE_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/audio_pipeline/*.c))
 
 ESPADF_AUDIO_SAL_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/audio_sal/*.c))
+ESPADF_ADF_UTILS_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/adf_utils/cloud_services/*.c))
+ESPADF_DUEROS_SERVICE_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/dueros_service/*.c))
 
 ESPADF_AUDIO_STREAM_O = $(patsubst %.c,%.o,\
-	$(ADFCOMP)/audio_stream/fatfs_stream.c \
 	$(ADFCOMP)/audio_stream/http_stream.c \
 	$(ADFCOMP)/audio_stream/i2s_stream.c \
 	$(ADFCOMP)/audio_stream/raw_stream.c \
-	$(ADFCOMP)/audio_stream/spiffs_stream.c \
 	$(ADFCOMP)/audio_stream/hls_playlist.c \
 	)
 
@@ -30,11 +30,11 @@ ESPADF_ESP_PERIPHERALS_O = $(patsubst %.c,%.o,\
 	$(ADFCOMP)/esp_peripherals/periph_led.c \
 	$(ADFCOMP)/esp_peripherals/periph_ws2812.c \
 	$(ADFCOMP)/esp_peripherals/lib/button/button.c \
-	$(ADFCOMP)/esp_peripherals/lib/sdcard/sdcard.c \
 	)
 
 	# $(ADFCOMP)/esp_peripherals/periph_sdcard.c 
 	# $(ADFCOMP)/esp_peripherals/periph_spiffs.c 
+	# $(ADFCOMP)/esp_peripherals/lib/sdcard/sdcard.c 
 
 ESPADF_LIBS_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/esp-adf-libs/esp_codec/*.c))
 
@@ -47,12 +47,14 @@ ESPIDF_PLAYLIST_O = $(patsubst %.c,%.o, \
 $(eval $(call gen_espidf_lib_rule,audio_board,$(ESPADF_AUDIO_BOARD_O)))
 $(eval $(call gen_espidf_lib_rule,audio_pipeline,$(ESPADF_AUDIO_PIPELINE_O)))
 $(eval $(call gen_espidf_lib_rule,audio_sal,$(ESPADF_AUDIO_SAL_O)))
+$(eval $(call gen_espidf_lib_rule,adf_utils,$(ESPADF_ADF_UTILS_O)))
 $(eval $(call gen_espidf_lib_rule,audio_stream,$(ESPADF_AUDIO_STREAM_O)))
 $(eval $(call gen_espidf_lib_rule,display_service,$(ESPADF_DISPLAY_SERVICE_O)))
 $(eval $(call gen_espidf_lib_rule,esp_dispatcher,$(ESPADF_ESP_DISPATCHER_O)))
 $(eval $(call gen_espidf_lib_rule,esp_peripherals,$(ESPADF_ESP_PERIPHERALS_O)))
 $(eval $(call gen_espidf_lib_rule,esp-adf-libs,$(ESPADF_LIBS_O)))
 $(eval $(call gen_espidf_lib_rule,esp-adf-libs,$(ESPIDF_PLAYLIST_O)))
+$(eval $(call gen_espidf_lib_rule,dueros_service,$(ESPADF_DUEROS_SERVICE_O)))
 
 ################################################################################
 # List of object files from the ESP32 IDF components which are needed by ADF components

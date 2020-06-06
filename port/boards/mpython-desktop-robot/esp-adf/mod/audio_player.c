@@ -120,8 +120,7 @@ STATIC esp_audio_handle_t audio_player_create(void)
     vfs_stream_cfg_t fs_reader = VFS_STREAM_CFG_DEFAULT();
     fs_reader.type = AUDIO_STREAM_READER;
     fs_reader.task_core = 1;
-    fs_reader.task_stack  = 10240;
-    fs_reader.task_prio =   9;
+    fs_reader.task_stack = 10240;
     esp_audio_input_stream_add(player, vfs_stream_init(&fs_reader));
     // http stream
     http_stream_cfg_t http_cfg = HTTP_STREAM_CFG_DEFAULT();
@@ -144,6 +143,7 @@ STATIC esp_audio_handle_t audio_player_create(void)
     // wav
     wav_decoder_cfg_t wav_dec_cfg = DEFAULT_WAV_DECODER_CONFIG();
     wav_dec_cfg.task_core = 1;
+    wav_dec_cfg.task_stack = 10240;
     esp_audio_codec_lib_add(player, AUDIO_CODEC_TYPE_DECODER, wav_decoder_init(&wav_dec_cfg));
 
     // Create writers and add to esp_audio
@@ -211,6 +211,7 @@ STATIC mp_obj_t audio_player_play_helper(audio_player_obj_t *self, mp_uint_t n_a
         if (args[ARG_sync].u_obj == mp_const_false) {
             self->state.status = AUDIO_STATUS_RUNNING;
             self->state.err_msg = ESP_ERR_AUDIO_NO_ERROR;
+            mp_warning(NULL, "begin play.");
             return mp_obj_new_int(esp_audio_play(self->player, AUDIO_CODEC_TYPE_DECODER, uri, pos));
         } else {
             return mp_obj_new_int(esp_audio_sync_play(self->player, uri, pos));

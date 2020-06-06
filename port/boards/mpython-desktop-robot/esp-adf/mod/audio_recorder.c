@@ -39,6 +39,7 @@
 
 #include "amrnb_encoder.h"
 #include "wav_encoder.h"
+#include "es8388.h"
 
 enum {
     PCM,
@@ -64,9 +65,12 @@ STATIC mp_obj_t audio_recorder_stop(mp_obj_t self_in);
 
 STATIC mp_obj_t audio_recorder_make_new(const mp_obj_type_t *type, size_t n_args, size_t n_kw, const mp_obj_t *args)
 {
-    mp_arg_check_num(n_args, n_kw, 0, 0, false);
+    mp_arg_check_num(n_args, n_kw, 1, 1, false);
     audio_recorder_obj_t *self = m_new_obj_with_finaliser(audio_recorder_obj_t);
     self->base.type = type;
+    if(!es_i2c_obj){
+        es_i2c_obj = (mp_obj_base_t *)args[1];
+    }
     return MP_OBJ_FROM_PTR(self);
 }
 
@@ -151,6 +155,7 @@ STATIC void audio_recorder_create(audio_recorder_obj_t *self, const char *uri, i
     i2s_cfg.type = AUDIO_STREAM_READER;
     i2s_cfg.uninstall_drv = false;
     i2s_cfg.i2s_config.sample_rate = 48000;
+    i2s_cfg.i2s_config.intr_alloc_flags = ESP_INTR_FLAG_LEVEL2;
     self->i2s_stream = i2s_stream_init(&i2s_cfg);
     // filter
     self->filter = audio_recorder_create_filter(format);
@@ -245,35 +250,40 @@ STATIC mp_obj_t audio_recorder_stop(mp_obj_t self_in)
         esp_timer_delete(self->timer);
         self->timer = NULL;
     }
+    mp_warning(NULL, "free timer.");
     if (self->pipeline != NULL) {
         audio_pipeline_terminate(self->pipeline);
     } else {
         return mp_obj_new_bool(false);
     }
-
+ mp_warning(NULL, "pipelin terminate.");
     if (self->i2s_stream) {
         audio_pipeline_unregister(self->pipeline, self->i2s_stream);
         audio_element_deinit(self->i2s_stream);
         self->i2s_stream = NULL;
     }
+ mp_warning(NULL, "free i2s strem .");
     if (self->filter) {
         audio_pipeline_unregister(self->pipeline, self->filter);
         audio_element_deinit(self->filter);
         self->filter = NULL;
     }
+ mp_warning(NULL, "free filter.");
     if (self->encoder) {
         audio_pipeline_unregister(self->pipeline, self->encoder);
         audio_element_deinit(self->encoder);
         self->encoder = NULL;
     }
+ mp_warning(NULL, "free encode.");
     if (self->out_stream) {
         audio_pipeline_unregister(self->pipeline, self->out_stream);
         audio_element_deinit(self->out_stream);
         self->out_stream = NULL;
     }
+ mp_warning(NULL, "free out stream.");
     audio_pipeline_deinit(self->pipeline);
     self->pipeline = NULL;
-
+ mp_warning(NULL, "free pipeline.");
     return mp_obj_new_bool(true);
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(audio_recorder_stop_obj, audio_recorder_stop);
