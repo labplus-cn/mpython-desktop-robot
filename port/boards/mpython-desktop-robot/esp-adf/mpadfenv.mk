@@ -4,8 +4,8 @@
 # $(error ADF_PATH not set)
 # endif
 
-ESPADF = lib/esp-adf
-ADFCOMP = lib/esp-adf/components
+ESPADF = ../esp-adf
+ADFCOMP = ../esp-adf/components
 ESPCOMP_KCONFIGS += $(shell find $(ADFCOMP) -name Kconfig)
 ESPCOMP_KCONFIGS_PROJBUILD += $(shell find $(ADFCOMP) -name Kconfig.projbuild)
 
@@ -14,6 +14,7 @@ ADF_VER = := $(shell git -C $(ESPADF) describe)
 CFLAGS_COMMON += -Wno-sign-compare
 
 # bluetooth_service clouds dueros_service esp_actions input_key_service playlist wifi_service
+INC += -I$(BOARD_DIR)/esp-adf/mod
 INC += -I$(BOARD_DIR)/esp-adf/mod/include
 INC += -I$(BOARD_DIR)/esp-adf/mod/dueros/main
 
@@ -44,14 +45,17 @@ INC_ESPCOMP += -I$(ADFCOMP)/esp-adf-libs/esp_dlna/include
 INC_ESPCOMP += -I$(ADFCOMP)/esp-adf-libs/esp_upnp/include
 INC_ESPCOMP += -I$(ADFCOMP)/esp-adf-libs/esp_sip/include
 INC_ESPCOMP += -I$(ADFCOMP)/esp-adf-libs/audio_misc/include
+INC_ESPCOMP += -I$(ADFCOMP)/esp-sr/acoustic_algorithm/include
+INC_ESPCOMP += -I$(ADFCOMP)/esp-sr/wake_word_engine/include
+INC_ESPCOMP += -I$(ADFCOMP)/esp-sr/lib/include
 INC_ESPCOMP += -I$(ADFCOMP)/playlist/include
 INC_ESPCOMP += -I$(ADFCOMP)/adf_utils/include
 INC_ESPCOMP += -I$(ADFCOMP)/adf_utils/cloud_services/include
 INC_ESPCOMP += -I$(ADFCOMP)/clouds/dueros/lightduer/include
 INC_ESPCOMP += -I$(ADFCOMP)/dueros_service/include
 
-# INC_ESPCOMP += -I$(ESPCOMP)/esp_http_client/include
-# INC_ESPCOMP += -I$(ESPCOMP)/esp_http_client/lib/include
+INC_ESPCOMP += -I$(ESPCOMP)/esp_http_client/include
+INC_ESPCOMP += -I$(ESPCOMP)/esp_http_client/lib/include
 # INC_ESPCOMP += -I$(ESPCOMP)/spiffs/include
 # INC_ESPCOMP += -I$(ESPCOMP)/spiffs/src
 # INC_ESPCOMP += -I$(ESPCOMP)/fatfs/src
@@ -60,5 +64,7 @@ INC_ESPCOMP += -I$(ADFCOMP)/dueros_service/include
 INC_ESPCOMP += -I$(ESPCOMP)/esp_adc_cal/include
 # INC_ESPCOMP += -I$(ESPCOMP)/wear_levelling/include
 # INC_ESPCOMP += -I$(ESPCOMP)/wear_levelling/private_include
-# INC_ESPCOMP += -I$(ESPCOMP)/tcp_transport/include
-# INC_ESPCOMP += -I$(ESPCOMP)/esp-tls
+INC_ESPCOMP += -I$(ESPCOMP)/tcp_transport/include
+# INC_ESPCOMP += -I$(ESPCOMP)/tcp_transport/private_include
+INC_ESPCOMP += -I$(ESPCOMP)/esp-tls
+# INC_ESPCOMP += -I$(ESPCOMP)/esp-tls/private_include

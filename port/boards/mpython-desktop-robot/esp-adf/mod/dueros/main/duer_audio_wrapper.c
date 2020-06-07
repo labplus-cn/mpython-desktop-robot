@@ -39,7 +39,8 @@
 #include "board.h"
 #include "audio_common.h"
 
-#include "fatfs_stream.h"
+// #include "fatfs_stream.h"
+#include "vfs_stream.h"
 #include "raw_stream.h"
 #include "i2s_stream.h"
 #include "wav_decoder.h"
@@ -120,10 +121,17 @@ static void setup_player(void)
     xTaskCreate(esp_audio_state_task, "player_task", 3 * 1024, cfg.evt_que, 1, NULL);
 
     // Create readers and add to esp_audio
-    fatfs_stream_cfg_t fs_reader = FATFS_STREAM_CFG_DEFAULT();
-    fs_reader.type = AUDIO_STREAM_READER;
+    // fatfs_stream_cfg_t fs_reader = FATFS_STREAM_CFG_DEFAULT();
+    // fs_reader.type = AUDIO_STREAM_READER;
 
-    esp_audio_input_stream_add(player, fatfs_stream_init(&fs_reader));
+    // esp_audio_input_stream_add(player, fatfs_stream_init(&fs_reader));
+
+    vfs_stream_cfg_t fs_reader = VFS_STREAM_CFG_DEFAULT();
+    fs_reader.type = AUDIO_STREAM_READER;
+    fs_reader.task_core = 1;
+    fs_reader.task_stack = 10240;
+    esp_audio_input_stream_add(player, vfs_stream_init(&fs_reader));
+
     http_stream_cfg_t http_cfg = HTTP_STREAM_CFG_DEFAULT();
     http_cfg.event_handle = _http_stream_event_handle;
     http_cfg.type = AUDIO_STREAM_READER;

@@ -36,7 +36,15 @@ ESPADF_ESP_PERIPHERALS_O = $(patsubst %.c,%.o,\
 	# $(ADFCOMP)/esp_peripherals/periph_spiffs.c 
 	# $(ADFCOMP)/esp_peripherals/lib/sdcard/sdcard.c 
 
-ESPADF_LIBS_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/esp-adf-libs/esp_codec/*.c))
+ESPADF_LIBS_O = $(patsubst %.c,%.o, \
+	$(wildcard $(ADFCOMP)/esp-adf-libs/esp_codec/*.c) \
+	$(wildcard $(ADFCOMP)/esp-adf-libs/audio_misc/*.c) \
+	)
+
+# ESPADF_ESP_SR_O = $(patsubst %.c,%.o, 
+# 	$(wildcard $(ADFCOMP)/esp-adf-libs/esp_codec/*.c) 
+# 	$(wildcard $(ADFCOMP)/esp-adf-libs/audio_misc/*.c) 
+# 	)
 
 ESPIDF_PLAYLIST_O = $(patsubst %.c,%.o, \
 	$(wildcard $(ADFCOMP)/playlist/*.c) \
@@ -53,16 +61,16 @@ $(eval $(call gen_espidf_lib_rule,display_service,$(ESPADF_DISPLAY_SERVICE_O)))
 $(eval $(call gen_espidf_lib_rule,esp_dispatcher,$(ESPADF_ESP_DISPATCHER_O)))
 $(eval $(call gen_espidf_lib_rule,esp_peripherals,$(ESPADF_ESP_PERIPHERALS_O)))
 $(eval $(call gen_espidf_lib_rule,esp-adf-libs,$(ESPADF_LIBS_O)))
-$(eval $(call gen_espidf_lib_rule,esp-adf-libs,$(ESPIDF_PLAYLIST_O)))
+$(eval $(call gen_espidf_lib_rule,esp-idf-playlist,$(ESPIDF_PLAYLIST_O)))
 $(eval $(call gen_espidf_lib_rule,dueros_service,$(ESPADF_DUEROS_SERVICE_O)))
 
 ################################################################################
 # List of object files from the ESP32 IDF components which are needed by ADF components
 
-# ESPIDF_HTTP_CLIENT_O = $(patsubst %.c,%.o,
-# 	$(wildcard $(ESPCOMP)/esp_http_client/*.c) 
-# 	$(wildcard $(ESPCOMP)/esp_http_client/lib/*.c) 
-# 	)
+ESPIDF_HTTP_CLIENT_O = $(patsubst %.c,%.o, \
+	$(wildcard $(ESPCOMP)/esp_http_client/*.c) \
+	$(wildcard $(ESPCOMP)/esp_http_client/lib/*.c) \
+	)
 
 # ESPIDF_SPIFFS_O = $(patsubst %.c,%.o,$(wildcard $(ESPCOMP)/spiffs/spiffs/src/*.c))
 
@@ -77,15 +85,24 @@ ESPIDF_ADC_CAL_O = $(patsubst %.c,%.o,$(wildcard $(ESPCOMP)/esp_adc_cal/*.c))
 
 # ESPIDF_WEAR_LEVELLING_O = $(patsubst %.cpp,%.o,$(wildcard $(ESPCOMP)/wear_levelling/*.cpp))
 
-# ESPIDF_TCP_TRANSPORT_O = $(patsubst %.c,%.o,$(wildcard $(ESPCOMP)/tcp_transport/*.c))
+ESPIDF_TCP_TRANSPORT_O = $(patsubst %.c,%.o,$(wildcard $(ESPCOMP)/tcp_transport/*.c))
 
-# ESPIDF_ESP_TLS_O = $(patsubst %.c,%.o,$(wildcard $(ESPCOMP)/esp-tls/*.c))
+ESPIDF_ESP_TLS_O = $(patsubst %.c,%.o,$(wildcard $(ESPCOMP)/esp-tls/*.c))
 
 
-# $(eval $(call gen_espidf_lib_rule,esp_http_client,$(ESPIDF_HTTP_CLIENT_O)))
+$(eval $(call gen_espidf_lib_rule,esp_http_client,$(ESPIDF_HTTP_CLIENT_O)))
 # $(eval $(call gen_espidf_lib_rule,spiffs,$(ESPIDF_SPIFFS_O)))
 # $(eval $(call gen_espidf_lib_rule,fatfs,$(ESPIDF_FATFS_O)))
 $(eval $(call gen_espidf_lib_rule,esp_adc_cal,$(ESPIDF_ADC_CAL_O)))
 # $(eval $(call gen_espidf_lib_rule,wear_levelling,$(ESPIDF_WEAR_LEVELLING_O)))
-# $(eval $(call gen_espidf_lib_rule,tcp_transport,$(ESPIDF_TCP_TRANSPORT_O)))
-# $(eval $(call gen_espidf_lib_rule,esp_tls,$(ESPIDF_ESP_TLS_O)))
+$(eval $(call gen_espidf_lib_rule,tcp_transport,$(ESPIDF_TCP_TRANSPORT_O)))
+$(eval $(call gen_espidf_lib_rule,esp_tls,$(ESPIDF_ESP_TLS_O)))
+
+# nghttp
+ESPIDF_NGHTTP_O = $(patsubst %.c,%.o, $(wildcard $(ESPCOMP)/nghttp/port/*.c)) 
+$(eval $(call gen_espidf_lib_rule,nghttp,$(ESPIDF_NGHTTP_O)))
+
+# # esp_websocket_client
+# CFLAGS += -I$(ESPCOMP)/esp_websocket_client/include
+# ESPIDF_ESP_WEBSOCKET_O = $(patsubst %.c,%.o, $(wildcard $(ESPCOMP)/esp_websocket_client/*.c))
+# $(eval $(call gen_espidf_lib_rule,esp_websocket_client,$(ESPIDF_ESP_WEBSOCKET_O)))

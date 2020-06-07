@@ -128,7 +128,7 @@ void recorder_record(const char *filename, int time)
         /* make wav head */
         wav_header_t *wav_header = calloc(1, sizeof(wav_header_t));
         if (!wav_header)
-            mp_raise_ValueError("Can not alloc enough memory to make wav head.");
+            mp_raise_ValueError(MP_ERROR_TEXT("Can not alloc enough memory to make wav head."));
         wav_head_init(wav_header, renderer->sample_rate, renderer->bit_depth, renderer->i2s_channal_nums, data_len);
         file_write(F, &write_bytes, (uint8_t *)wav_header, sizeof(wav_header_t));
         free(wav_header);
@@ -137,7 +137,7 @@ void recorder_record(const char *filename, int time)
         for (int i = 0; i < blocks; i++){
             read_buff[i] = (uint8_t *)m_new(uint8_t, REC_BLOCK_LEN);
             if (!read_buff[i])
-                mp_raise_ValueError("Can not alloc enough memory to record.");
+                mp_raise_ValueError(MP_ERROR_TEXT("Can not alloc enough memory to record."));
         }
 
         #if MICROPY_BUILDIN_ADC

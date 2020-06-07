@@ -52,7 +52,6 @@
 #include "py/nlr.h"
 #include "py/compile.h"
 #include "py/runtime.h"
-#include "py/persistentcode.h"
 #include "py/repl.h"
 #include "py/gc.h"
 #include "py/mphal.h"
@@ -63,13 +62,10 @@
 #include "modnetwork.h"
 #include "mpthreadport.h"
 
-#if MICROPY_BLUETOOTH_NIMBLE
-#include "extmod/modbluetooth.h"
-#endif
-
 // MicroPython runs as a task under FreeRTOS
 #define MP_TASK_PRIORITY        (ESP_TASK_PRIO_MIN + 1)
 #define MP_TASK_STACK_SIZE      (16 * 1024)
+#define MP_TASK_STACK_LEN       (MP_TASK_STACK_SIZE / sizeof(StackType_t))
 
 int vprintf_null(const char *format, va_list ap) {
     // do nothing: this is used as a log target during raw repl mode
@@ -78,10 +74,12 @@ int vprintf_null(const char *format, va_list ap) {
 
 volatile uint32_t ticker_ticks_ms = 0;
 extern void mpython_music_tick(void);
+extern void mpython_display_tick(void);
 static void timer_1ms_ticker(void *args)
 {
     ticker_ticks_ms += 1;
     mpython_music_tick();
+    mpython_display_tick();
 }
 
 void mpython_display_exception(mp_obj_t exc_in)
@@ -131,7 +129,7 @@ void mpython_stop_thread(void) {
 void mp_task(void *pvParameter) {
     volatile uint32_t sp = (uint32_t)get_sp();
     #if MICROPY_PY_THREAD
-    mp_thread_init(pxTaskGetStackStart(NULL), MP_TASK_STACK_SIZE / sizeof(uintptr_t));
+    mp_thread_init(pxTaskGetStackStart(NULL), MP_TASK_STACK_LEN);
     #endif
 
     esp_log_level_set("*", ESP_LOG_ERROR);    // only error msg for mpython
@@ -188,7 +186,7 @@ soft_reset:
     // initialise peripherals
     machine_pins_init();
 
-    	// add by zhang kaihua
+	// add by zhang kaihua
 	// for music function
 	const esp_timer_create_args_t periodic_timer_args = {
 		.callback = &timer_1ms_ticker,
@@ -220,10 +218,6 @@ soft_reset:
         }
     }
 
-    #if MICROPY_BLUETOOTH_NIMBLE
-    mp_bluetooth_deinit();
-    #endif
-
     machine_timer_deinit_all();
 
     #if MICROPY_PY_THREAD
@@ -238,10 +232,10 @@ soft_reset:
     machine_pins_deinit();
     usocket_events_deinit();
 
-        esp_timer_stop(periodic_timer);
+    esp_timer_stop(periodic_timer);
     esp_timer_delete(periodic_timer);
     MP_STATE_PORT(music_data) = NULL;
-
+    
     mp_deinit();
     fflush(stdout);
     goto soft_reset;
@@ -253,7 +247,7 @@ void app_main(void) {
         nvs_flash_erase();
         nvs_flash_init();
     }
-    xTaskCreatePinnedToCore(mp_task, "mp_task", MP_TASK_STACK_SIZE / sizeof(StackType_t), NULL, MP_TASK_PRIORITY, &mp_main_task_handle, MP_TASK_COREID);
+    xTaskCreatePinnedToCore(mp_task, "mp_task", MP_TASK_STACK_LEN, NULL, MP_TASK_PRIORITY, &mp_main_task_handle, MP_TASK_COREID);
 }
 
 void nlr_jump_fail(void *val) {
@@ -266,14 +260,11 @@ void mbedtls_debug_set_threshold(int threshold) {
     (void)threshold;
 }
 
-void *esp_native_code_commit(void *buf, size_t len, void *reloc) {
+void *esp_native_code_commit(void *buf, size_t len) {
     len = (len + 3) & ~3;
     uint32_t *p = heap_caps_malloc(len, MALLOC_CAP_EXEC);
     if (p == NULL) {
         m_malloc_fail(len);
-    }
-    if (reloc) {
-        mp_native_relocate(reloc, buf, (uintptr_t)p);
     }
     memcpy(p, buf, len);
     return p;
