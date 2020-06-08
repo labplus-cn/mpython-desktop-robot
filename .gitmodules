@@ -4,6 +4,3 @@
 [submodule "micropython"]
 	path = micropython
 	url = https://github.com/micropython/micropython.git
-[submodule "esp-adf"]
-	path = esp-adf
-	url = https://github.com.cnpmjs.org/espressif/esp-adf.git
