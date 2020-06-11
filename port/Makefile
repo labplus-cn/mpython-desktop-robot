@@ -489,7 +489,8 @@ PY_O := $(filter-out $(BUILD)/extmod/modframebuf.o, $(PY_O))
 
 SRC_C += $(BOARD_C) $(BUILTIN_C) $(SRC_MOD)
 SRC_C += $(wildcard $(BOARD_DIR)/esp-adf/mod/*.c)
-SRC_C += $(wildcard $(BOARD_DIR)/esp-adf/mod/dueros/main/*.c)
+SRC_C += $(wildcard $(BOARD_DIR)/esp-adf/dueros/dueros_service/*.c)
+SRC_C += $(wildcard $(BOARD_DIR)/esp-adf/dueros/*.c)
 
 OBJ_MP =
 OBJ_MP += $(PY_O)

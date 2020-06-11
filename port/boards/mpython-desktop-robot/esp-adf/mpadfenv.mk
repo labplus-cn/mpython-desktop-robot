@@ -16,7 +16,8 @@ CFLAGS_COMMON += -Wno-sign-compare
 # bluetooth_service clouds dueros_service esp_actions input_key_service playlist wifi_service
 INC += -I$(BOARD_DIR)/esp-adf/mod
 INC += -I$(BOARD_DIR)/esp-adf/mod/include
-INC += -I$(BOARD_DIR)/esp-adf/mod/dueros/main
+INC += -I$(BOARD_DIR)/esp-adf/dueros
+INC += -I$(BOARD_DIR)/esp-adf/dueros/dueros_service/include
 
 INC_ESPCOMP += -I$(BOARD_DIR)/esp-adf/board/include
 
@@ -32,9 +33,9 @@ INC_ESPCOMP += -I$(ADFCOMP)/display_service/led_indicator/include
 INC_ESPCOMP += -I$(ADFCOMP)/display_service/led_bar/include
 INC_ESPCOMP += -I$(ADFCOMP)/esp_dispatcher/include
 INC_ESPCOMP += -I$(ADFCOMP)/esp_peripherals/include
-INC_ESPCOMP += -I$(ADFCOMP)/esp_peripherals/lib/blufi
+# INC_ESPCOMP += -I$(ADFCOMP)/esp_peripherals/lib/blufi
 INC_ESPCOMP += -I$(ADFCOMP)/esp_peripherals/lib/button
-INC_ESPCOMP += -I$(ADFCOMP)/esp_peripherals/lib/gpio_isr
+# INC_ESPCOMP += -I$(ADFCOMP)/esp_peripherals/lib/gpio_isr
 INC_ESPCOMP += -I$(ADFCOMP)/esp_peripherals/lib/sdcard
 INC_ESPCOMP += -I$(ADFCOMP)/esp-adf-libs/esp_audio/include
 INC_ESPCOMP += -I$(ADFCOMP)/esp-adf-libs/esp_codec/include/codec
@@ -52,7 +53,6 @@ INC_ESPCOMP += -I$(ADFCOMP)/playlist/include
 INC_ESPCOMP += -I$(ADFCOMP)/adf_utils/include
 INC_ESPCOMP += -I$(ADFCOMP)/adf_utils/cloud_services/include
 INC_ESPCOMP += -I$(ADFCOMP)/clouds/dueros/lightduer/include
-INC_ESPCOMP += -I$(ADFCOMP)/dueros_service/include
 
 INC_ESPCOMP += -I$(ESPCOMP)/esp_http_client/include
 INC_ESPCOMP += -I$(ESPCOMP)/esp_http_client/lib/include

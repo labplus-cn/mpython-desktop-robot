@@ -150,7 +150,7 @@ void mp_task(void *pvParameter) {
             break;
         case ESP_SPIRAM_SIZE_32MBITS:
         case ESP_SPIRAM_SIZE_64MBITS:
-            mp_task_heap_size = 3 * 1024 * 1024;
+            mp_task_heap_size = 2 * 1024 * 1024;
             break;
         default:
             // No SPIRAM, fallback to normal allocation

@@ -7,7 +7,7 @@ APP_LD_ARGS += -L$(ADFCOMP)/audio_hal/driver/zl38063/firmware -lfirmware
 endif
 
 AUDIO_LIBS := esp_processing esp_audio esp-amr esp-amrwbenc esp-aac esp-ogg-container esp-opus esp-tremor esp-flac esp_ssdp \
-esp_upnp esp_sip esp-mp3 esp_audio_processor codec-utils duer-device recorder_engine hilexin_wn5 c_speech_features \
+esp_upnp esp_sip esp-mp3 esp_audio_processor codec-utils duer-device recorder_engine nihaoxiaozhi_wn5 c_speech_features \
 dl_lib multinet wakenet
 
 APP_LD_ARGS +=  -L$(ADFCOMP)/esp-adf-libs/esp_audio/lib/esp32 \

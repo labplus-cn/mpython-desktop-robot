@@ -41,6 +41,8 @@
 2020-05-29
 加入esp-adf
 1、修改分区表
-2、创建文件夹esp-adf,置相关源文件及编译选项。
-3、修改makefile
-4、解决之前固件中已有es8388.c/h文件冲突
+2、添加子模块esp-adf,
+3、需修改的ADF源文件放在mpython-desktop-robot/esp-adf下。
+4、修改makefile
+5、解决之前固件中已有es8388.c/h文件冲突
+6、打上esp-idf补丁。

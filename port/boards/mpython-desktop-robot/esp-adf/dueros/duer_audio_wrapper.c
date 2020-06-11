@@ -129,7 +129,6 @@ static void setup_player(void)
     vfs_stream_cfg_t fs_reader = VFS_STREAM_CFG_DEFAULT();
     fs_reader.type = AUDIO_STREAM_READER;
     fs_reader.task_core = 1;
-    fs_reader.task_stack = 10240;
     esp_audio_input_stream_add(player, vfs_stream_init(&fs_reader));
 
     http_stream_cfg_t http_cfg = HTTP_STREAM_CFG_DEFAULT();
@@ -143,6 +142,7 @@ static void setup_player(void)
     i2s_stream_cfg_t i2s_writer = I2S_STREAM_CFG_DEFAULT();
     i2s_writer.i2s_config.sample_rate = 48000;
     i2s_writer.type = AUDIO_STREAM_WRITER;
+    i2s_writer.i2s_config.intr_alloc_flags = ESP_INTR_FLAG_LEVEL2;
 
     // Add decoders and encoders to esp_audio
     wav_decoder_cfg_t wav_dec_cfg = DEFAULT_WAV_DECODER_CONFIG();
@@ -165,7 +165,7 @@ static void setup_player(void)
     esp_audio_output_stream_add(player, i2s_stream_init(&i2s_writer));
 
     // Set default volume
-    esp_audio_vol_set(player, 60);
+    esp_audio_vol_set(player, 80);
     AUDIO_MEM_SHOW(TAG);
     ESP_LOGI(TAG, "esp_audio instance is:%p", player);
 }
@@ -252,9 +252,10 @@ void duer_dcs_get_speaker_state(int *volume, duer_bool *is_mute)
     int ret = 0;
     int vol = 0;
     ret = esp_audio_vol_get(player, &vol);
-    if (ret != 0) {
+    if (ret == 0) {
         ESP_LOGE(TAG, "Failed to get volume");
     } else {
+        ESP_LOGI(TAG, "volume is: %d", vol);
         *volume = vol;
         if (vol != 0) {
             *is_mute = false;

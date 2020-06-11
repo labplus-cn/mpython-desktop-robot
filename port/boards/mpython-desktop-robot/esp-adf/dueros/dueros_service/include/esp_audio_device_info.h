@@ -22,23 +22,24 @@
  *
  */
 
-#include <string.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
-#include "nvs_flash.h"
-#include "tcpip_adapter.h"
-#include "dueros_app.h"
+#ifndef _ESP_ADUIO_DEVICE_INFO_H
+#define _ESP_ADUIO_DEVICE_INFO_H
 
-void app_main(void)
-{
-    esp_err_t err = nvs_flash_init();
-    if (err == ESP_ERR_NVS_NO_FREE_PAGES) {
-        // NVS partition was truncated and needs to be erased
-        // Retry nvs_flash_init
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        err = nvs_flash_init();
-    }
-    tcpip_adapter_init();
-    duer_app_init();
+#ifdef __cplusplus
+extern "C" {
+#endif
+/*
+ * Initialise Device Information
+ *
+ * @param void:
+ *
+ * @return int: Success: 0
+ *              Failed:  Other
+ */
+extern int duer_init_device_info(void);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif // _ESP_ADUIO_DEVICE_INFO_H

@@ -7,7 +7,7 @@ ESPADF_AUDIO_PIPELINE_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/audio_pipelin
 
 ESPADF_AUDIO_SAL_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/audio_sal/*.c))
 ESPADF_ADF_UTILS_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/adf_utils/cloud_services/*.c))
-ESPADF_DUEROS_SERVICE_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/dueros_service/*.c))
+# ESPADF_DUEROS_SERVICE_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/dueros_service/*.c))
 
 ESPADF_AUDIO_STREAM_O = $(patsubst %.c,%.o,\
 	$(ADFCOMP)/audio_stream/http_stream.c \
@@ -26,7 +26,6 @@ ESPADF_ESP_DISPATCHER_O = $(patsubst %.c,%.o,$(wildcard $(ADFCOMP)/esp_dispatche
 ESPADF_ESP_PERIPHERALS_O = $(patsubst %.c,%.o,\
 	$(ADFCOMP)/esp_peripherals/esp_peripherals.c \
 	$(ADFCOMP)/esp_peripherals/periph_button.c \
-	$(ADFCOMP)/esp_peripherals/periph_gpio_isr.c \
 	$(ADFCOMP)/esp_peripherals/periph_led.c \
 	$(ADFCOMP)/esp_peripherals/periph_ws2812.c \
 	$(ADFCOMP)/esp_peripherals/lib/button/button.c \
@@ -34,7 +33,8 @@ ESPADF_ESP_PERIPHERALS_O = $(patsubst %.c,%.o,\
 
 	# $(ADFCOMP)/esp_peripherals/periph_sdcard.c 
 	# $(ADFCOMP)/esp_peripherals/periph_spiffs.c 
-	# $(ADFCOMP)/esp_peripherals/lib/sdcard/sdcard.c 
+	# $(ADFCOMP)/esp_peripherals/lib/sdcard/sdcard.c
+	# $(ADFCOMP)/esp_peripherals/periph_gpio_isr.c  
 
 ESPADF_LIBS_O = $(patsubst %.c,%.o, \
 	$(wildcard $(ADFCOMP)/esp-adf-libs/esp_codec/*.c) \
@@ -62,7 +62,7 @@ $(eval $(call gen_espidf_lib_rule,esp_dispatcher,$(ESPADF_ESP_DISPATCHER_O)))
 $(eval $(call gen_espidf_lib_rule,esp_peripherals,$(ESPADF_ESP_PERIPHERALS_O)))
 $(eval $(call gen_espidf_lib_rule,esp-adf-libs,$(ESPADF_LIBS_O)))
 $(eval $(call gen_espidf_lib_rule,esp-idf-playlist,$(ESPIDF_PLAYLIST_O)))
-$(eval $(call gen_espidf_lib_rule,dueros_service,$(ESPADF_DUEROS_SERVICE_O)))
+# $(eval $(call gen_espidf_lib_rule,dueros_service,$(ESPADF_DUEROS_SERVICE_O)))
 
 ################################################################################
 # List of object files from the ESP32 IDF components which are needed by ADF components

@@ -30,18 +30,46 @@
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
 #include "dueros_app.h"
+#include "es8388.h"
+#include "esp_audio.h"
 
+extern esp_audio_handle_t player;
 
-STATIC mp_obj_t dueros_init(void)
+STATIC mp_obj_t dueros_init(mp_obj_t _i2c)
 {
+    if(!es_i2c_obj){
+        es_i2c_obj = (mp_obj_base_t *)_i2c;
+    }
     duer_app_init();
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(dueros_init_obj, dueros_init);
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(dueros_init_obj, dueros_init);
+
+STATIC mp_obj_t audio_player_get_vol(void)
+{
+    int vol = 0;
+    if (!player)
+        mp_raise_ValueError(MP_ERROR_TEXT("No player!"));
+    esp_audio_vol_get(player, &vol);
+    return mp_obj_new_int(vol);
+
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(audio_player_get_vol_obj, audio_player_get_vol);
+
+STATIC mp_obj_t audio_player_set_vol(mp_obj_t vol)
+{
+    int volume = mp_obj_get_int(vol);
+    if (!player)
+        mp_raise_ValueError(MP_ERROR_TEXT("No player!"));
+    return mp_obj_new_int(esp_audio_vol_set(player, volume));
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(audio_player_set_vol_obj, audio_player_set_vol);
 
 STATIC const mp_rom_map_elem_t dueros_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_audio) },
     { MP_ROM_QSTR(MP_QSTR_dueros_init), MP_ROM_PTR(&dueros_init_obj) },
+    { MP_ROM_QSTR(MP_QSTR_get_vol), MP_ROM_PTR(&audio_player_get_vol_obj) },
+    { MP_ROM_QSTR(MP_QSTR_set_vol), MP_ROM_PTR(&audio_player_set_vol_obj) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(dueros_module_globals, dueros_module_globals_table);

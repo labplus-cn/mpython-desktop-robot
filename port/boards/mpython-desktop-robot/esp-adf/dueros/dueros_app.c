@@ -123,6 +123,7 @@ static esp_err_t recorder_pipeline_open(void **handle)
     }
     i2s_stream_cfg_t i2s_cfg = I2S_STREAM_CFG_DEFAULT();
     i2s_cfg.type = AUDIO_STREAM_READER;
+    i2s_cfg.i2s_config.intr_alloc_flags = ESP_INTR_FLAG_LEVEL2;
     i2s_stream_reader = i2s_stream_init(&i2s_cfg);
     audio_element_info_t i2s_info = {0};
     audio_element_getinfo(i2s_stream_reader, &i2s_info);
@@ -232,7 +233,7 @@ static esp_err_t duer_callback(audio_service_handle_t handle, service_event_t *e
     return ESP_OK;
 }
 
-/*
+
 esp_err_t periph_callback(audio_event_iface_msg_t *event, void *context)
 {
     ESP_LOGD(TAG, "Periph Event received: src_type:%x, source:%p cmd:%d, data:%p, data_len:%d",
@@ -248,6 +249,7 @@ esp_err_t periph_callback(audio_event_iface_msg_t *event, void *context)
                 }
                 break;
             }
+        /*
         case PERIPH_ID_TOUCH: {
                 if ((int)event->data == TOUCH_PAD_NUM4 && event->cmd == PERIPH_BUTTON_PRESSED) {
 
@@ -322,13 +324,12 @@ esp_err_t periph_callback(audio_event_iface_msg_t *event, void *context)
                 esp_audio_vol_set(player, 0);
                 ESP_LOGI(TAG, "AUDIO_USER_KEY_VOL_MUTE [0]");
             }
-            break;
+            break; */
         default:
             break;
     }
     return ESP_OK;
 }
-*/
 
 void duer_app_init(void)
 {
@@ -336,17 +337,17 @@ void duer_app_init(void)
 
     // ESP_LOGI(TAG, "ADF version is %s", ADF_VER);
 
-    // esp_periph_config_t periph_cfg = DEFAULT_ESP_PERIPH_SET_CONFIG();
-    // esp_periph_set_handle_t set = esp_periph_set_init(&periph_cfg);
-    // if (set != NULL) {
-    //     esp_periph_set_register_callback(set, periph_callback, NULL);
-    // }
+    esp_periph_config_t periph_cfg = DEFAULT_ESP_PERIPH_SET_CONFIG();
+    esp_periph_set_handle_t set = esp_periph_set_init(&periph_cfg);
+    if (set != NULL) {
+        esp_periph_set_register_callback(set, periph_callback, NULL);
+    }
 
-    // audio_board_key_init(set);
+    audio_board_key_init(set);
     // audio_board_sdcard_init(set);
     // disp_serv = audio_board_led_init();
 
-    duer_audio_wrapper_init();
+    duer_audio_wrapper_init();   
     xTimerHandle retry_login_timer = xTimerCreate("tm_duer_login", 1000 / portTICK_PERIOD_MS,
                                      pdFALSE, NULL, retry_login_timer_cb);
     duer_serv_handle = dueros_service_create();
