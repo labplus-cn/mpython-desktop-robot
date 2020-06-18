@@ -22,7 +22,7 @@ i2c = I2C(0, scl=Pin(Pin.P19), sda=Pin(Pin.P20), freq=400000)
 
 
 class Font(object):
-    def __init__(self, font_address=0x400000):
+    def __init__(self, font_address=0xc00000):
         self.font_address = font_address
         buffer = bytearray(18)
         esp.flash_read(self.font_address, buffer)
@@ -308,9 +308,7 @@ class STATUS_LED():
         self.led.write_digital(0)
 
 # display
-if 60 in i2c.scan():
-    oled = OLED()
-    # display = oled
+oled = OLED()
 
 # 3 axis accelerometer
 accelerometer = Accelerometer()
@@ -334,11 +332,14 @@ light_R.atten(light_R.ATTN_11DB)
 # # sound = ADC(Pin(36))
 # # sound.atten(sound.ATTN_11DB)
 
+# wakeup pin
+pin_wakeup = MPythonPin(0, PinMode.OUT) # p0
+pin_wakeup.write_digital(1) # 3v3 enable
 
 # buttons
 button_b = Pin(2, Pin.IN, Pin.PULL_UP)
 # status led
-status_led = STATUS_LED()
+# status_led = STATUS_LED()
 
 # pin_st_int = Pin(26, Pin.IN, Pin.PULL_UP)
 # def st_int_trigger(_):
