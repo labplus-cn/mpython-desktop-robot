@@ -308,6 +308,12 @@ class RobotHandColor(object):
         self.right = 2
 
     def set_color(self,hand, color):
+        """ 
+        设置机器人左右手颜色。
+
+        :param hand: 1: 左手 2：右手
+        :param color: 颜色值(r,g,b)
+        """
         if hand == 1: # left hand
             for i in range(0,4):
                 rgb[i] = color
@@ -318,6 +324,11 @@ class RobotHandColor(object):
             rgb.write()
 
     def clear(self, hand):
+        """ 
+        清除机器人左右手颜色。
+
+        :param hand: 1: 左手 2：右手
+        """
         if hand == 1: # left hand
             for i in range(0,4):
                 rgb[i] = (0,0,0)
@@ -332,6 +343,11 @@ class Ultrasonic(object):
         self.hcsr04 = HCSR04(trigger_pin=Pin.P14, echo_pin=Pin.P15)
 
     def distance_mm(self):
+        """ 
+        获取超声波测距值。
+
+        :return: 返回超声波测距值，单位：mm
+        """
         return self.hcsr04.distance_mm()
 
 color_sensor = Tcs34725()
