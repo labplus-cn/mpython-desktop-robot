@@ -325,7 +325,14 @@ class RobotHandColor(object):
         elif hand == 2: # right hand
             for i in range(4,8):
                 rgb[i] = (0,0,0)
-            rgb.write()    
+            rgb.write()  
+
+class Ultrasonic(object):
+    def __init__(self):
+        self.hcsr04 = HCSR04(trigger_pin=Pin.P14, echo_pin=Pin.P15)
+
+    def distance_mm(self):
+        return self.hcsr04.distance_mm()
 
 color_sensor = Tcs34725()
 """颜色传感器实例"""
@@ -337,7 +344,7 @@ robot_motion = RobotMotion()
 """机器人运动传感器实例"""
 sys_config = SysConfig()
 """机器人系统配置类实例"""
-ultrasonic = HCSR04(trigger_pin=Pin.P14, echo_pin=Pin.P15)
+ultrasonic = Ultrasonic()
 """超声波传感器实例"""
 hand_color = RobotHandColor()
 """机器人左右手颜色显示类实例"""
