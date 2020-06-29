@@ -301,9 +301,9 @@ class SysConfig(object):
 
 class RobotHandColor(object):
     def __init__(self):
-        for i in range(0,8):
-            rgb[i] = (0,0,0)
-        rgb.write()
+        # for i in range(0,8):
+        #     rgb[i] = (0,0,0)
+        # rgb.write()
         self.left = 1
         self.right = 2
 
