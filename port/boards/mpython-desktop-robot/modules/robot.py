@@ -1,10 +1,10 @@
-from mpython import i2c
+from mpython import i2c, rgb
 from machine import Pin
 import time, ustruct
 import esp32
 from hcsr04 import HCSR04
 
-class TCS34725(object):
+class Tcs34725(object):
     """ 
 
     | 颜色传感器类
@@ -122,7 +122,7 @@ class TCS34725(object):
         else:
             i2c.writeto(17, b'\x98')
 
-class TRACKING(object):
+class Tracking(object):
     """
     | 机器人控制类。
     | 本类实现机器人相关功能：颜色识别、防跌落、循迹、机器人运动及省电功能控制。
@@ -172,7 +172,7 @@ class TRACKING(object):
         tracking_data = tmp[0:4]
         return tracking_data       
 
-class DROP_DETECT(object):
+class DropDetect(object):
     def __init__(self):
         self.drop_detct_ir_on = False # 防跌落红外发射管状态，耗电较大，不用时须关闭
 
@@ -214,7 +214,7 @@ class DROP_DETECT(object):
         drop_detect_data = tmp[4:8]     
         return drop_detect_data   
 
-class ROBOT_MOTION(object):
+class RobotMotion(object):
     def set_motor(self, num, speed):
         """ 
         控制单个马达
@@ -263,7 +263,7 @@ class ROBOT_MOTION(object):
             tmp = struct.pack('<bf', 0xF7, val)
             i2c.writeto(17, tmp) 
 
-class SYS_CONFIG(object):
+class SysConfig(object):
     def get_sys_params(self):
         """ 
         获取机器人所有配置参数
@@ -299,13 +299,45 @@ class SYS_CONFIG(object):
         elif mode == 3:
             i2c.writeto(17, b'\x83')
 
-color_sensor = TCS34725()
+class RobotHandColor(object):
+    def __init__(self):
+        for i in range(0,8):
+            rgb[i] = (0,0,0)
+        rgb.write()
+        self.left = 1
+        self.right = 2
+
+    def set_color(self,hand, color):
+        if hand == 1: # left hand
+            for i in range(0,4):
+                rgb[i] = color
+            rgb.write()            
+        elif hand == 2: # right hand
+            for i in range(4,8):
+                rgb[i] = color
+            rgb.write()
+
+    def clear(self, hand):
+        if hand == 1: # left hand
+            for i in range(0,4):
+                rgb[i] = (0,0,0)
+            rgb.write()            
+        elif hand == 2: # right hand
+            for i in range(4,8):
+                rgb[i] = (0,0,0)
+            rgb.write()    
+
+color_sensor = Tcs34725()
 """颜色传感器实例"""
-tracking_sensor = TRACKING()
+tracking_sensor = Tracking()
 """循迹传感器实例"""
-drop_sensor = DROP_DETECT()
+drop_sensor = DropDetect()
 """防跌落传感器实例"""
-robot_motion = ROBOT_MOTION()
+robot_motion = RobotMotion()
 """机器人运动传感器实例"""
+sys_config = SysConfig()
+"""机器人系统配置类实例"""
 ultrasonic = HCSR04(trigger_pin=Pin.P14, echo_pin=Pin.P15)
 """超声波传感器实例"""
+hand_color = RobotHandColor()
+"""机器人左右手颜色显示类实例"""
