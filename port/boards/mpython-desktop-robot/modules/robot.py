@@ -1,4 +1,4 @@
-from mpython import *
+from mpython import i2c, Pin
 import time, ustruct
 import esp32
 from hcsr04 import HCSR04
@@ -299,7 +299,12 @@ class SYS_CONFIG(object):
             i2c.writeto(17, b'\x83')
 
 color_sensor = TCS34725()
+"""颜色传感器实例"""
 tracking_sensor = TRACKING()
+"""循迹传感器实例"""
 drop_sensor = DROP_DETECT()
+"""防跌落传感器实例"""
 robot_motion = ROBOT_MOTION()
+"""机器人运动传感器实例"""
 ultrasonic = HCSR04(trigger_pin=Pin.P14, echo_pin=Pin.P15)
+"""超声波传感器实例"""
