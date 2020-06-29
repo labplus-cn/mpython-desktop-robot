@@ -1,4 +1,5 @@
-from mpython import i2c, Pin
+from mpython import i2c
+from machine import Pin
 import time, ustruct
 import esp32
 from hcsr04 import HCSR04
