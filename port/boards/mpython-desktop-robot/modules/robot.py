@@ -299,19 +299,22 @@ class SysConfig(object):
         elif mode == 3:
             i2c.writeto(17, b'\x83')
 
+class Hand():
+    left = 1
+    right =2
+
 class RobotHandColor(object):
     def __init__(self):
         # for i in range(0,8):
         #     rgb[i] = (0,0,0)
         # rgb.write()
-        self.left = 1
-        self.right = 2
+        pass
 
     def set_color(self,hand, color):
         """ 
         设置机器人左右手颜色。
 
-        :param hand: 1: 左手 2：右手
+        :param hand: Hand.left: 左手 Hand.right：右手
         :param color: 颜色值(r,g,b)
         """
         if hand == 1: # left hand
@@ -327,7 +330,7 @@ class RobotHandColor(object):
         """ 
         清除机器人左右手颜色。
 
-        :param hand: 1: 左手 2：右手
+        :param hand: Hand.left: 左手 Hand.right：右手
         """
         if hand == 1: # left hand
             for i in range(0,4):
