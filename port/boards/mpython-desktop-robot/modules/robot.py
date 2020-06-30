@@ -344,6 +344,8 @@ class RobotHandColor(object):
             rgb.write()  
 
 class Ultrasonic(object):
+    """超声波测距传感器类"""
+
     def __init__(self):
         self.hcsr04 = HCSR04(trigger_pin=Pin.P14, echo_pin=Pin.P15)
 
@@ -358,21 +360,20 @@ class Ultrasonic(object):
 class Button(object):
     """顶部按键类"""
 
+
+    def __init__(self, callback):
+        self.cb1 = callback
+        button_b.irq(trigger=Pin.IRQ_FALLING, handler=self._on_button_pressed)
+
     def _on_button_pressed(self, _):
         """ 
         按键按下回调函数，本函数会调用用户回调函数，用户可在自定义的回
-        调函数中编写按键响应代码。
-
-        :param 无
+        调函数中编写按键响应代码。本函数不需要被用户调用。
         """
         time.sleep_ms(50)
         if button_b.value() == 1: 
             return
         self.cb1(0)
-
-    def __init__(self, callback):
-        self.cb1 = callback
-        button_b.irq(trigger=Pin.IRQ_FALLING, handler=self._on_button_pressed)
 
 color_sensor = Tcs34725()
 """颜色传感器实例"""
