@@ -1,4 +1,4 @@
-from mpython import i2c, rgb
+from mpython import i2c, rgb, button_b
 from machine import Pin
 import time, ustruct
 import esp32
@@ -304,6 +304,8 @@ class Hand():
     right =2
 
 class RobotHandColor(object):
+    """机器人左右手颜色设置类"""
+
     def __init__(self):
         # for i in range(0,8):
         #     rgb[i] = (0,0,0)
@@ -352,6 +354,25 @@ class Ultrasonic(object):
         :return: 返回超声波测距值，单位：mm
         """
         return self.hcsr04.distance_mm()
+
+class Button(object):
+    """顶部按键类"""
+
+    def _on_button_pressed(self, _):
+        """ 
+        按键按下回调函数，本函数会调用用户回调函数，用户可在自定义的回
+        调函数中编写按键响应代码。
+
+        :param 无
+        """
+        time.sleep_ms(50)
+        if button_b.value() == 1: 
+            return
+        self.cb1(0)
+
+    def __init__(self, callback):
+        self.cb1 = callback
+        button_b.irq(trigger=Pin.IRQ_FALLING, handler=self._on_button_pressed)
 
 color_sensor = Tcs34725()
 """颜色传感器实例"""
