@@ -23,7 +23,7 @@ class Tcs34725(object):
     def __init__(self):
         pass
 
-    def led_on(self, on):
+    def set_led(self, on):
         """ 
         打开/关闭补光灯
 
@@ -34,18 +34,18 @@ class Tcs34725(object):
         else:
             i2c.writeto(17, b'\x8B') # color led off
 
-    def sensor_init(self):
+    def init(self):
         """ 
         颜色传感器初始化，使用颜色传感前，必须先调用本函数初始化。
         """
-        self.led_o(True)
+        self.set_led(True)
         i2c.writeto(17, b'\x8C') # color sensor init
 
-    def sensor_deinit(self):
+    def deinit(self):
         """ 
         颜色传感器去初始化，不需要使用颜色传感器时，可调用本函数。
         """
-        self.led_on(False)
+        self.set_led(False)
         i2c.writeto(17, b'\x8D') # color sensor deinit
 
     def get_raw(self):
@@ -55,7 +55,7 @@ class Tcs34725(object):
         :return: tuple 裸数据元组(r,g,b,c)
         """
         i2c.writeto(17, b'\x03', False)        
-        raw = struct.unpack('HHHH',i2c.readfrom(17, 8))
+        raw = ustruct.unpack('HHHH',i2c.readfrom(17, 8))
         return raw
 
     def get_rgb(self):
@@ -65,7 +65,7 @@ class Tcs34725(object):
         :return: tuple RGB颜色值元组(r,g,b)
         """
         i2c.writeto(17, b'\x04', False)       
-        rgb = struct.unpack('BBB',i2c.readfrom(17, 3))
+        rgb = ustruct.unpack('BBB',i2c.readfrom(17, 3))
         return rgb     
 
     def get_hsv(self):
@@ -75,18 +75,18 @@ class Tcs34725(object):
         :return: tuple hsv颜色值元组(h,s,v)
         """
         i2c.writeto(17, b'\x05', False)       
-        hsv = struct.unpack('Iff',i2c.readfrom(17, 12))
+        hsv = ustruct.unpack('Iff',i2c.readfrom(17, 12))
         return hsv
 
-    def get_color_temperature(self):
+    def get_temp(self):
         """ 
         获取色温值
 
         :return: int 色温值
         """
-        self.led_on(False)
+        self.set_led(False)
         i2c.writeto(17, b'\x06', False)   
-        color_temp = struct.unpack('H',i2c.readfrom(17, 2))
+        color_temp = ustruct.unpack('H',i2c.readfrom(17, 2))[0]
         return color_temp
 
     def get_lux(self):
@@ -95,9 +95,9 @@ class Tcs34725(object):
 
         :return: int 亮度值，单位lux
         """
-        self.led_on(False)
+        self.set_led(False)
         i2c.writeto(17, b'\x08', False)   
-        lux = struct.unpack('H',i2c.readfrom(17, 2))
+        lux = ustruct.unpack('H',i2c.readfrom(17, 2))[0]
         return lux
 
     def set_balance(self, mode):
@@ -111,7 +111,7 @@ class Tcs34725(object):
         elif mode == 2:
              i2c.writeto(17, b'\xF3')   # black balance   
 
-    def balance_enable(self, en):
+    def balance_en(self, en):
         """ 
         使能/禁能亮暗平衡调整功能，获取反射型物体颜色时，须调用本函数使能亮暗平衡调整功能。
         
@@ -130,7 +130,7 @@ class Tracking(object):
     def __init__(self):
         self.tracking_led_on = False
 
-    def set_tracking_led(self, on):
+    def set_led(self, on):
         """ 
         循迹传感器led开关，使用循迹传感器前需打开LED。
         
@@ -152,13 +152,13 @@ class Tracking(object):
         else:
             i2c.writeto(17, b'\x89') 
 
-    def detect_tracking_param(self):
+    def detect_param(self):
         """ 
         获取循迹图上的黑白AD采样值，改善循迹效果。执行本函数后，相关参数存在flash，因此通常只需执行一次。
         """
         i2c.writeto(17, b'\xF4') 
 
-    def get_tracking_val(self):
+    def get_val(self):
         """ 
         获取循迹AD采样值
 
@@ -166,9 +166,9 @@ class Tracking(object):
         """
         if not self.tracking_led_on :
             self.tracking_led_on = True
-            self.set_tracking_led(1)
+            self.set_led(1)
         i2c.writeto(17, b'\x01', False) # 获取AD值
-        tmp = struct.unpack('HHHHHHHH',i2c.readfrom(17, 16))
+        tmp = ustruct.unpack('HHHHHHHH',i2c.readfrom(17, 16))
         tracking_data = tmp[0:4]
         return tracking_data       
 
@@ -176,7 +176,7 @@ class DropDetect(object):
     def __init__(self):
         self.drop_detct_ir_on = False # 防跌落红外发射管状态，耗电较大，不用时须关闭
 
-    def drop_detect_ir(self, on):
+    def set_ir(self, on):
         """ 
         防跌落传感器发射管开关，使用防跌落传感器需打开发射管。
         
@@ -187,7 +187,7 @@ class DropDetect(object):
         else:
             i2c.writeto(17, b'\x8F') 
     
-    def auto_drop_detect(self, enable):
+    def auto_detect(self, enable):
         """ 
         开启/禁止内置防跌落功能, 开启本功能后，探测到机器人悬空后，机器人停止行走。
         
@@ -200,7 +200,7 @@ class DropDetect(object):
             i2c.writeto(17, b'\x8F') #关闭防跌红外发射管
             i2c.writeto(17, b'\x91')
     
-    def get_drop_sensor_val(self):
+    def get_sensor_val(self):
         """ 
         获取防跌落传感器AD采样值
 
@@ -210,9 +210,18 @@ class DropDetect(object):
             self.drop_detct_ir_on = True
             i2c.writeto(17, b'\x8E') #打开防跌红外发射管
         i2c.writeto(17, b'\x01', False) #发出读ADC数据指令   
-        tmp = struct.unpack('HHHHHHHH',i2c.readfrom(17, 16))
+        tmp = ustruct.unpack('HHHHHHHH',i2c.readfrom(17, 16))
         drop_detect_data = tmp[4:8]     
-        return drop_detect_data   
+        return drop_detect_data 
+
+    def set_threshold(self, threshold):
+        """ 
+        设置跌落检测阈值
+
+        :param threshold: 四个角的防跌落检测阈值。 
+        """
+        tmp = ustruct.pack('<b4H', 0x96, threshold[0], threshold[1], threshold[2], threshold[3])
+        i2c.writeto(17, tmp) 
 
 class RobotMotion(object):
     def set_motor(self, num, speed):
@@ -222,30 +231,30 @@ class RobotMotion(object):
         :param num: 马达号， 1：左马达 2：右马达
         :param speed: 速度 取值范围： -100 -- 100
         """
-        tmp = struct.pack('<3b', 0x96, num, speed)
+        tmp = ustruct.pack('<3b', 0x94, num, speed)
         i2c.writeto(17, tmp) 
 
-    def robot_move(self, speed, ditance = 0xffffffff):
+    def move(self, speed, ditance = 0xffffffff):
         """ 
         机器人前进、后退
 
         :param speed: 速度 取值范围： -100 -- 100 正值代表前进
         :param distance: 前时后退时，表示移动距离 0 -- 0xffffffff，单位:mm 为0xffffffff时表示持续行走。 
         """
-        tmp = struct.pack('<b2I', 0x92, speed, ditance)
+        tmp = ustruct.pack('<b2I', 0x92, speed, ditance)
         i2c.writeto(17, tmp) 
 
-    def robot_rotate(self, speed, angle):
+    def rotate(self, speed, angle):
         """ 
         机器人旋转
 
         :param speed: 速度 取值范围： 0 -- 100
         :param angel: 转角，单位:度 取值范围：-360 -- 360  正值代表右转
         """
-        tmp = struct.pack('<b2H', 0x93, speed, angle)
+        tmp = ustruct.pack('<b2H', 0x93, speed, angle)
         i2c.writeto(17, tmp) 
 
-    def motor_compensation(self, mode, val):
+    def compensation(self, mode, val):
         """ 
         机器人行走参数补偿
 
@@ -256,19 +265,19 @@ class RobotMotion(object):
         :param val: 补偿值，浮点数，可为正负值。
         """
         if mode == 1:
-            tmp = struct.pack('<bf', 0xF6, val)
+            tmp = ustruct.pack('<bf', 0xF6, val)
             print(tmp)
             i2c.writeto(17, tmp) 
         elif mode == 2:
-            tmp = struct.pack('<bf', 0xF7, val)
+            tmp = ustruct.pack('<bf', 0xF7, val)
             i2c.writeto(17, tmp) 
 
 class SysConfig(object):
-    def get_sys_params(self):
+    def get_params(self):
         """ 
         获取机器人所有配置参数
         
-        :return: 示例：(85, 0.002, 0.005, 1.0, 1.0, 1.0,  8, 11, 10, 30, 254, 3411, 3157, 259, 3444, 3185, 254, 3498, 3244, 252, 3305, 3053)  
+        :return: 示例：(85, 0.002, 0.005, 1.0, 1.0, 1.0,  8, 11, 10, 30, 254, 3411, 3157, 259, 3444, 3185, 254, 3498, 3244, 252, 3305, 3053, 2000, 2000, 2000, 2000)  
         | 85: 标记   
         | 0.002: 行走补偿 
         | 0.005: 旋转补偿  
@@ -277,10 +286,10 @@ class SysConfig(object):
         | 254, 3411, 3157, 259: 循迹传感器1白平衡亮、值、差值 有4组  
         """
         i2c.writeto(17, b'\x71', False)   
-        sys_params = struct.unpack('I5f16H',i2c.readfrom(17, 56))
+        sys_params = ustruct.unpack('I5f20H',i2c.readfrom(17, 56))
         return sys_params
 
-    def set_default_sys_params(self):
+    def set_default_params(self):
         """ 
         设置缺省的参数。配置参数调乱时，可调用本函数恢复缺省参数。
         """
@@ -373,7 +382,7 @@ class Button(object):
         time.sleep_ms(50)
         if button_b.value() == 1: 
             return
-        self.cb1(0)
+        self.cb1()
 
 color_sensor = Tcs34725()
 """颜色传感器实例"""
@@ -383,7 +392,7 @@ drop_sensor = DropDetect()
 """防跌落传感器实例"""
 robot_motion = RobotMotion()
 """机器人运动传感器实例"""
-sys_config = SysConfig()
+sys_cfg = SysConfig()
 """机器人系统配置类实例"""
 ultrasonic = Ultrasonic()
 """超声波传感器实例"""
