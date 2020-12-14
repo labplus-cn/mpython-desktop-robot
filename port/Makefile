@@ -1115,14 +1115,14 @@ $(BUILD)/bootloader.elf: $(BOOTLOADER_OBJ) $(addprefix $(BOOTLOADER_LIB_DIR)/lib
 ################################################################################
 # Declarations to build the partitions
 
-PYTHON2 ?= python2
+PYTHON3 ?= python3
 
 # Can be overriden by mkconfigboard.mk.
 PART_SRC ?= partitions.csv
 
 $(BUILD)/partitions.bin: $(PART_SRC)
 	$(ECHO) "Create $@"
-	$(Q)$(PYTHON2) $(ESPCOMP)/partition_table/gen_esp32part.py -q $< $@
+	$(Q)$(PYTHON3) $(ESPCOMP)/partition_table/gen_esp32part.py -q $< $@
 
 ################################################################################
 

@@ -38,14 +38,14 @@ class Tcs34725(object):
         """ 
         颜色传感器初始化，使用颜色传感前，必须先调用本函数初始化。
         """
-        self.set_led(True)
+        # self.set_led(True)
         i2c.writeto(17, b'\x8C') # color sensor init
 
     def deinit(self):
         """ 
         颜色传感器去初始化，不需要使用颜色传感器时，可调用本函数。
         """
-        self.set_led(False)
+        # self.set_led(False)
         i2c.writeto(17, b'\x8D') # color sensor deinit
 
     def get_raw(self):
